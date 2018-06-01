@@ -1,13 +1,13 @@
-# react-obf-grid
+# react-scannable
 
 >
 
-[![NPM](https://img.shields.io/npm/v/react-obf-grid.svg)](https://www.npmjs.com/package/react-obf-grid)
+[![NPM](https://img.shields.io/npm/v/react-scannable.svg)](https://www.npmjs.com/package/react-scannable)
 
 ## Install
 
 ```bash
-npm install --save react-obf-grid
+npm install --save react-scannable
 ```
 
 ## Usage
@@ -15,11 +15,11 @@ npm install --save react-obf-grid
 ```jsx
 import React, { Component } from 'react';
 
-import Grid from 'react-obf-grid';
+import Scannable from 'react-scannable';
 
 class Example extends Component {
   render() {
-    return <Grid rows={3} columns={3} order={[[], [], []]} />;
+    return <Scannable><button>CLICK</button></Scannable>;
   }
 }
 ```
