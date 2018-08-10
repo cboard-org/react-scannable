@@ -1,7 +1,7 @@
-import Grid from './';
+import Scannable from './Scannable';
 
-describe('Grid', () => {
+describe('Scannable', () => {
   it('is truthy', () => {
-    expect(Grid).toBeTruthy();
+    expect(Scannable).toBeTruthy();
   });
 });

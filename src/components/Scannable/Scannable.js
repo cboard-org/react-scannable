@@ -1,7 +1,3 @@
-/**
- * @class Scannable
- */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
@@ -9,16 +5,15 @@ import './Scannable.css';
 
 class Scannable extends Component {
   static propTypes = {
+    children: PropTypes.node.isRequired
   };
 
-  static defaultProps = {
-  };
+  static defaultProps = {};
 
   render() {
-    return (
-      <div className="Scannable">
-      </div>
-    );
+    const { children } = this.props;
+
+    return <div className="Scannable">{children}</div>;
   }
 }
 
