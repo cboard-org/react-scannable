@@ -1,5 +1,7 @@
 ```js
 <Scannable>
-  <button type="button">CLICK!</button>
+  <button className="originalButton" type="button">
+    CLICK!
+  </button>
 </Scannable>
 ```

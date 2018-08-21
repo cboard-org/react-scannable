@@ -1,0 +1,19 @@
+.Scanner__Container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.Scanner__EventsHandler {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.scanner__focused {
+  border: 1px solid red;
+}
