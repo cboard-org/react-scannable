@@ -24,6 +24,7 @@ class Scannable extends React.Component {
       children,
       scanner: { focusedItem }
     } = this.props;
+
     const childrenWithProps = React.Children.map(children, child => {
       const isFocused = focusedItem && focusedItem.scannableId === this.scannableId;
       const classes = [child.props.className || '', isFocused ? SCANNABLE_FOCUSED_CLASSNAME : ''];
