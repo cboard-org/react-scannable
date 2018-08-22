@@ -63,8 +63,6 @@ class Scanner extends React.Component {
       elementsToIterate: [],
       focusedIndex: 0
     };
-
-    this.scannerEventAction = this.scannerEventActionFn.bind(this);
   }
 
   componentDidMount() {
@@ -103,7 +101,7 @@ class Scanner extends React.Component {
     document.body.removeEventListener('keydown', this.scannerEventAction);
   }
 
-  scannerEventActionFn(event) {
+  scannerEventAction = event => {
     const { active } = this.props;
 
     if (active && !this.selectedElement) {
@@ -115,7 +113,7 @@ class Scanner extends React.Component {
         this.selectElement(elementToSelect, event);
       }
     }
-  }
+  };
 
   clearIterateInterval() {
     if (this.iterateIntervalFn) {
@@ -161,7 +159,7 @@ class Scanner extends React.Component {
         this.selectedElement = element;
         dispatchEvent(element, event);
       }
-      this.setState({ selectedPath }, this.iterateScannableElements.bind(this));
+      this.setState({ selectedPath }, this.iterateScannableElements);
     }
   }
 
