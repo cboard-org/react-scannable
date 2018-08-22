@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import ScannerContext from './Scanner.context';
 
@@ -53,7 +52,7 @@ const getTreeForElement = (elementNode, scannables) => {
 class Scanner extends React.Component {
   constructor(props) {
     super(props);
-    // this.scannerOverlay = React.createRef();
+    this.scannerNode = React.createRef();
     this.elements = {};
     this.tree = {};
     this.selectedElement = null;
@@ -123,9 +122,8 @@ class Scanner extends React.Component {
   }
 
   findNodes() {
-    this.scannerNode = ReactDOM.findDOMNode(this);
     const elementsArray = Object.values(this.elements);
-    const children = getTreeForElement(this.scannerNode, elementsArray);
+    const children = getTreeForElement(this.scannerNode.current, elementsArray);
     this.tree = { children };
   }
 
@@ -180,10 +178,10 @@ class Scanner extends React.Component {
     this.setState({ elementsToIterate, focusedIndex: 0 });
   }
 
-  addScannableElement(element) {
+  addScannableElement(element, ref) {
     this.elements[element.scannableId] = {
       element,
-      node: ReactDOM.findDOMNode(element)
+      node: ref.current
     };
   }
 
@@ -202,7 +200,7 @@ class Scanner extends React.Component {
 
     return (
       <ScannerContext.Provider value={contextValue}>
-        <div className="Scanner__Container">
+        <div className="Scanner__Container" ref={this.scannerNode}>
           {children}
           {/* {!!active && <div className="Scanner__EventsHandler" ref={this.scannerOverlay} />} */}
         </div>

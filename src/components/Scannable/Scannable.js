@@ -8,14 +8,14 @@ const SCANNABLE_FOCUSED_CLASSNAME = 'scanner__focused';
 class Scannable extends React.Component {
   constructor(props) {
     super(props);
-
+    this.scannableRef = React.createRef();
     this.scannableId = uuidv4();
   }
 
   componentDidMount() {
     const { scanner } = this.props;
     if (scanner && scanner.addScannableElement) {
-      scanner.addScannableElement(this);
+      scanner.addScannableElement(this, this.scannableRef);
     }
   }
 
@@ -28,7 +28,7 @@ class Scannable extends React.Component {
       const isFocused = focusedItem && focusedItem.scannableId === this.scannableId;
       const classes = [child.props.className || '', isFocused ? SCANNABLE_FOCUSED_CLASSNAME : ''];
       const className = classes.join(' ').trim();
-      return React.cloneElement(child, { className });
+      return React.cloneElement(child, { className, ref: this.scannableRef });
     });
 
     return <React.Fragment>{childrenWithProps}</React.Fragment>;
