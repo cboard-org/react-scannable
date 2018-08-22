@@ -22,14 +22,15 @@ class Scannable extends React.Component {
   render() {
     const {
       children,
-      scanner: { focusedItem }
+      scanner: { focusedItem },
+      ...other
     } = this.props;
 
     const childrenWithProps = React.Children.map(children, child => {
       const isFocused = focusedItem && focusedItem.scannableId === this.scannableId;
       const classes = [child.props.className || '', isFocused ? SCANNABLE_FOCUSED_CLASSNAME : ''];
       const className = classes.join(' ').trim();
-      return React.cloneElement(child, { className, ref: this.scannableRef });
+      return React.cloneElement(child, { className, ref: this.scannableRef, ...other });
     });
 
     return <React.Fragment>{childrenWithProps}</React.Fragment>;
