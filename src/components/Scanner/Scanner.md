@@ -1,5 +1,11 @@
 ```js
-<Scanner active>
+initialState = { isActive: false };
+<Scanner active={state.isActive}>
+  <Scannable>
+    <button type="button" onClick={() => setState({ isActive: !state.isActive })}>
+      {state.isActive ? 'Deactivate' : 'Activate'}
+    </button>
+  </Scannable>
   <Scannable>
     <div>
       <Scannable>
@@ -82,5 +88,5 @@
       </Scannable>
     </div>
   </Scannable>
-</Scanner>
+</Scanner>;
 ```

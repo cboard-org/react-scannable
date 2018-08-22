@@ -77,12 +77,16 @@ class Scanner extends React.Component {
 
   componentWillUnmount() {
     this.unregisterEvents();
-    this.clearIterateIntervalFn();
+    this.clearIterateInterval();
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.active !== this.props.active && this.props.active) {
-      this.iterateScannableElements();
+    if (prevProps.active !== this.props.active) {
+      if (this.props.active) {
+        this.iterateScannableElements();
+      } else {
+        this.clearIterateInterval();
+      }
     }
   }
 
@@ -112,7 +116,7 @@ class Scanner extends React.Component {
     }
   }
 
-  clearIterateIntervalFn() {
+  clearIterateInterval() {
     if (this.iterateIntervalFn) {
       clearInterval(this.iterateIntervalFn);
     }
@@ -126,6 +130,11 @@ class Scanner extends React.Component {
   }
 
   getElementsToIterate() {
+    const { active } = this.props;
+    if (!active) {
+      return [];
+    }
+
     let current = this.tree;
     if (this.state.selectedPath.length) {
       current = this.state.selectedPath.reduce((prev, id) => {
@@ -157,7 +166,7 @@ class Scanner extends React.Component {
   }
 
   iterateScannableElements() {
-    this.clearIterateIntervalFn();
+    this.clearIterateInterval();
     this.selectedElement = null;
     const elementsToIterate = this.getElementsToIterate();
     if (elementsToIterate.length) {
