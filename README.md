@@ -14,12 +14,23 @@ npm install --save react-scannable
 
 ```jsx
 import React, { Component } from 'react';
-
-import Scannable from 'react-scannable';
+import { Scannable, Scanner } from 'react-scannable';
 
 class Example extends Component {
+  state = {
+    isActive: true
+  };
+
   render() {
-    return <Scannable><button>CLICK</button></Scannable>;
+    const active = this.state.isActive;
+
+    return (
+      <Scanner active={active}>
+        <Scannable>
+          <button>CLICK</button>
+        </Scannable>
+      </Scanner>
+    );
   }
 }
 ```
