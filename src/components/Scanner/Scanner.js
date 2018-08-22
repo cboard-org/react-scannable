@@ -52,10 +52,12 @@ const getTreeForElement = (elementNode, scannables) => {
 class Scanner extends React.Component {
   constructor(props) {
     super(props);
+
     this.scannerNode = React.createRef();
     this.elements = {};
     this.tree = {};
     this.selectedElement = null;
+
     this.state = {
       selectedPath: [],
       elementsToIterate: [],
@@ -166,6 +168,7 @@ class Scanner extends React.Component {
   iterateScannableElements() {
     this.clearIterateInterval();
     this.selectedElement = null;
+
     const elementsToIterate = this.getElementsToIterate();
     if (elementsToIterate.length) {
       this.iterateIntervalFn = setInterval(() => {
@@ -178,15 +181,16 @@ class Scanner extends React.Component {
     this.setState({ elementsToIterate, focusedIndex: 0 });
   }
 
-  addScannableElement(element, ref) {
+  addScannableElement = (element, ref) => {
     this.elements[element.scannableId] = {
       element,
       node: ref.current
     };
-  }
+  };
 
   render() {
     const { children } = this.props;
+
     const focusedItem =
       this.state.elementsToIterate.length > 0
         ? this.state.elementsToIterate[this.state.focusedIndex].element
@@ -195,7 +199,7 @@ class Scanner extends React.Component {
     const contextValue = {
       ...this.state,
       focusedItem,
-      addScannableElement: this.addScannableElement.bind(this)
+      addScannableElement: this.addScannableElement
     };
 
     return (
