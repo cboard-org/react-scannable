@@ -1,53 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ScannerContext from './Scanner.context';
+import getTreeForElement from '../../utils/getTreeForElement';
+import {
+  SCANNER_ITERATION_INTERVAL,
+  SCANNABLE_FOCUSED_CLASSNAME,
+  SCANNABLE_FOCUSED_VISIBLE_THRESHOLD
+} from '../../constants';
 
 import './Scanner.css';
-
-const ITERATION_INTERVAL = 2000;
-
-const dispatchEvent = (element, event) => {
-  const { node } = element;
-  var eventToDispatch = new MouseEvent('click', {
-    view: window,
-    bubbles: true,
-    cancelable: false
-  });
-
-  node.dispatchEvent(eventToDispatch);
-};
-
-const getTreeForElement = (elementNode, scannables) => {
-  const children = Array.from(elementNode.children) || [];
-  let scannableChildren = [];
-  if (children && children.length) {
-    const indexes = [];
-    scannableChildren = scannables.filter(({ node }, i) => {
-      const index = children.indexOf(node);
-      if (index >= 0) {
-        indexes.push(i);
-        return true;
-      }
-      return false;
-    });
-
-    const newScannables = scannables.filter((e, i) => indexes.indexOf(i) < 0);
-
-    scannableChildren.forEach(sc => {
-      if (sc.node.children && sc.node.children.length) {
-        sc.children = getTreeForElement(sc.node, newScannables);
-      }
-    });
-  }
-
-  const tree = scannableChildren.reduce((prev, sc, i) => {
-    const treeId = `${i}_${sc.element.scannableId}`;
-    prev[treeId] = { ...sc, treeId };
-    return prev;
-  }, {});
-
-  return tree;
-};
+import dispatchEvent from '../../utils/dispatchEvent';
 
 class Scanner extends React.Component {
   constructor(props) {
@@ -57,6 +19,12 @@ class Scanner extends React.Component {
     this.elements = {};
     this.tree = {};
     this.selectedElement = null;
+
+    this.config = {
+      iterationInterval: props.iterationInterval,
+      focusedClassName: props.focusedClassName,
+      focusedVisibleThreshold: props.focusedVisibleThreshold
+    };
 
     this.state = {
       selectedPath: [],
@@ -173,7 +141,7 @@ class Scanner extends React.Component {
         const nextFocusedIndex = this.state.focusedIndex + 1;
         const focusedIndex = nextFocusedIndex < elementsToIterate.length ? nextFocusedIndex : 0;
         this.setState({ focusedIndex });
-      }, ITERATION_INTERVAL);
+      }, SCANNER_ITERATION_INTERVAL);
     }
 
     this.setState({ elementsToIterate, focusedIndex: 0 });
@@ -196,6 +164,7 @@ class Scanner extends React.Component {
 
     const contextValue = {
       ...this.state,
+      config: this.config,
       focusedItem,
       addScannableElement: this.addScannableElement
     };
@@ -211,9 +180,19 @@ class Scanner extends React.Component {
   }
 }
 
-Scanner.defaultProps = {};
+Scanner.defaultProps = {
+  active: false,
+  iterationInterval: SCANNER_ITERATION_INTERVAL,
+  focusedClassName: SCANNABLE_FOCUSED_CLASSNAME,
+  focusedVisibleThreshold: SCANNABLE_FOCUSED_VISIBLE_THRESHOLD
+};
+
 Scanner.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
+  active: PropTypes.bool,
+  iterationInterval: PropTypes.number,
+  focusedClassName: PropTypes.string,
+  focusedVisibleThreshold: PropTypes.number
 };
 
 export default Scanner;
