@@ -7,14 +7,14 @@ import checkVisibleAndScroll from '../../utils/checkVisibleAndScroll';
 class Scannable extends React.Component {
   constructor(props) {
     super(props);
-    this.scannableRef = React.createRef();
+
     this.scannableId = uuidv4();
   }
 
   componentDidMount() {
     const { scanner } = this.props;
     if (scanner && scanner.addScannableElement) {
-      scanner.addScannableElement(this, this.scannableRef);
+      scanner.addScannableElement(this);
     }
   }
 
@@ -30,16 +30,14 @@ class Scannable extends React.Component {
 
     const childrenWithProps = React.Children.map(children, child => {
       const classes = [child.props.className || ''];
-      const isFocused = focusedItem && focusedItem.scannableId === this.scannableId;
+      const isFocused = focusedItem.element && focusedItem.element.scannableId === this.scannableId;
 
       if (isFocused) {
-        const node = this.scannableRef.current;
         classes.push(focusedClassName);
-        checkVisibleAndScroll(node, focusedVisibleThreshold);
+        checkVisibleAndScroll(focusedItem.node, focusedVisibleThreshold);
       }
-
       const className = classes.join(' ').trim();
-      return React.cloneElement(child, { className, ref: this.scannableRef, ...other });
+      return React.cloneElement(child, { className, ...other });
     });
 
     return <React.Fragment>{childrenWithProps}</React.Fragment>;

@@ -1,26 +1,33 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import ScannerContext from './Scanner.context';
 import getTreeForElement from '../../utils/getTreeForElement';
 import {
+  SCANNER_CLASSNAME,
+  SCANNER_CLASSNAME_ACTIVE,
   SCANNER_ITERATION_INTERVAL,
   SCANNABLE_FOCUSED_CLASSNAME,
-  SCANNABLE_FOCUSED_VISIBLE_THRESHOLD
+  SCANNABLE_FOCUSED_VISIBLE_THRESHOLD,
+  SCANNER_EVENTS
 } from '../../constants';
+import dispatchEvent from '../../utils/dispatchEvent';
 
 import './Scanner.css';
-import dispatchEvent from '../../utils/dispatchEvent';
 
 class Scanner extends React.Component {
   constructor(props) {
     super(props);
-
-    this.scannerNode = React.createRef();
+    this.target = document.body;
+    this.scannerNode = null;
     this.elements = {};
     this.tree = {};
     this.selectedElement = null;
 
     this.config = {
+      scannerEvents: props.scannerEvents,
+      scannerClassName: props.scannerClassName,
+      scannerClassNameActive: props.scannerClassNameActive,
       iterationInterval: props.iterationInterval,
       focusedClassName: props.focusedClassName,
       focusedVisibleThreshold: props.focusedVisibleThreshold
@@ -34,10 +41,10 @@ class Scanner extends React.Component {
   }
 
   componentDidMount() {
-    this.findNodes();
     this.registerEvents();
 
     if (this.props.active) {
+      this.findNodes();
       this.iterateScannableElements();
     }
   }
@@ -50,6 +57,7 @@ class Scanner extends React.Component {
   componentDidUpdate(prevProps) {
     if (prevProps.active !== this.props.active) {
       if (this.props.active) {
+        this.findNodes();
         this.iterateScannableElements();
       } else {
         this.clearIterateInterval();
@@ -58,15 +66,15 @@ class Scanner extends React.Component {
   }
 
   registerEvents() {
-    document.body.addEventListener('click', this.scannerEventAction);
-    document.body.addEventListener('contextmenu', this.scannerEventAction);
-    document.body.addEventListener('keydown', this.scannerEventAction);
+    this.config.scannerEvents.forEach(e =>
+      this.target.addEventListener(e, this.scannerEventAction)
+    );
   }
 
   unregisterEvents() {
-    document.body.removeEventListener('click', this.scannerEventAction);
-    document.body.removeEventListener('contextmenu', this.scannerEventAction);
-    document.body.removeEventListener('keydown', this.scannerEventAction);
+    this.config.scannerEvents.forEach(e =>
+      this.target.removeEventListener(e, this.scannerEventAction)
+    );
   }
 
   scannerEventAction = event => {
@@ -90,8 +98,9 @@ class Scanner extends React.Component {
   }
 
   findNodes() {
+    this.scannerNode = ReactDOM.findDOMNode(this);
     const elementsArray = Object.values(this.elements);
-    const children = getTreeForElement(this.scannerNode.current, elementsArray);
+    const children = getTreeForElement(this.scannerNode, elementsArray);
     this.tree = { children };
   }
 
@@ -141,25 +150,25 @@ class Scanner extends React.Component {
         const nextFocusedIndex = this.state.focusedIndex + 1;
         const focusedIndex = nextFocusedIndex < elementsToIterate.length ? nextFocusedIndex : 0;
         this.setState({ focusedIndex });
-      }, SCANNER_ITERATION_INTERVAL);
+      }, this.config.iterationInterval);
     }
 
     this.setState({ elementsToIterate, focusedIndex: 0 });
   }
 
-  addScannableElement = (element, ref) => {
+  addScannableElement = element => {
     this.elements[element.scannableId] = {
       element,
-      node: ref.current
+      node: ReactDOM.findDOMNode(element)
     };
   };
 
   render() {
-    const { children } = this.props;
+    const { children, active } = this.props;
 
     const focusedItem =
       this.state.elementsToIterate.length > 0
-        ? this.state.elementsToIterate[this.state.focusedIndex].element
+        ? this.state.elementsToIterate[this.state.focusedIndex]
         : {};
 
     const contextValue = {
@@ -169,12 +178,11 @@ class Scanner extends React.Component {
       addScannableElement: this.addScannableElement
     };
 
+    const classes = active ? this.config.scannerClassNameActive : this.config.scannerClassName;
+
     return (
       <ScannerContext.Provider value={contextValue}>
-        <div className="Scanner__Container" ref={this.scannerNode}>
-          {children}
-          {/* {!!active && <div className="Scanner__EventsHandler" ref={this.scannerOverlay} />} */}
-        </div>
+        <div className={classes}>{children}</div>
       </ScannerContext.Provider>
     );
   }
@@ -182,6 +190,9 @@ class Scanner extends React.Component {
 
 Scanner.defaultProps = {
   active: false,
+  scannerEvents: SCANNER_EVENTS,
+  scannerClassName: SCANNER_CLASSNAME,
+  scannerClassNameActive: SCANNER_CLASSNAME_ACTIVE,
   iterationInterval: SCANNER_ITERATION_INTERVAL,
   focusedClassName: SCANNABLE_FOCUSED_CLASSNAME,
   focusedVisibleThreshold: SCANNABLE_FOCUSED_VISIBLE_THRESHOLD
@@ -190,6 +201,9 @@ Scanner.defaultProps = {
 Scanner.propTypes = {
   children: PropTypes.node.isRequired,
   active: PropTypes.bool,
+  scannerEvents: PropTypes.arrayOf(PropTypes.string),
+  scannerClassName: PropTypes.string,
+  scannerClassNameActive: PropTypes.string,
   iterationInterval: PropTypes.number,
   focusedClassName: PropTypes.string,
   focusedVisibleThreshold: PropTypes.number
