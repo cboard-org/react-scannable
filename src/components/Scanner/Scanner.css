@@ -15,6 +15,6 @@
 }
 
 .scanner__focused {
-  outline: 2px solid red;
-  outline-offset: -2px;
+  outline: 4px solid rgba(255, 0, 0, 1);
+  outline-offset: -4px;
 }
