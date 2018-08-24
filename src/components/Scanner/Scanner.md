@@ -13,9 +13,13 @@ initialState = { isActive: false };
           <button type="button">Not scannable</button>
           <span>
             <span>
-              <Scannable>
+              <Scannable
+                onSelect={(event, scannable, scanner) => {
+                  alert(scannable.scannableId);
+                }}
+              >
                 <button type="button" onClick={() => alert('Button #1.1')}>
-                  1.1
+                  1.1 (with scannable id)
                 </button>
               </Scannable>
             </span>

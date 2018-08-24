@@ -15,6 +15,13 @@ import dispatchEvent from '../../utils/dispatchEvent';
 
 import './Scanner.css';
 
+const SCANNER_INITIAL_STATE = {
+  selectedPath: [],
+  elementsToIterate: {},
+  keysToIterate: [],
+  focusedId: 'not-valid-id'
+};
+
 class Scanner extends React.Component {
   constructor(props) {
     super(props);
@@ -33,12 +40,7 @@ class Scanner extends React.Component {
       focusedVisibleThreshold: props.focusedVisibleThreshold
     };
 
-    this.state = {
-      selectedPath: [],
-      elementsToIterate: {},
-      keysToIterate: [],
-      focusedId: 'not-focused-id'
-    };
+    this.state = SCANNER_INITIAL_STATE;
   }
 
   componentDidMount() {
@@ -139,14 +141,15 @@ class Scanner extends React.Component {
     };
   }
 
-  selectElement(element, event) {
-    if (element && element.treeId) {
+  selectElement(scannable, event) {
+    if (scannable && scannable.treeId) {
       let selectedPath = [];
-      if (element.children) {
-        selectedPath = this.state.selectedPath.concat(element.treeId);
+      if (scannable.children) {
+        selectedPath = this.state.selectedPath.concat(scannable.treeId);
       } else {
-        this.selectedElement = element;
-        dispatchEvent(element, event);
+        this.selectedElement = scannable;
+        dispatchEvent(scannable, event);
+        scannable.element.onSelect(event);
       }
       this.setState({ selectedPath }, this.iterateScannableElements);
     }
@@ -211,6 +214,12 @@ class Scanner extends React.Component {
     this.iterateScannableElements(focusedId);
   };
 
+  reset = () => {
+    this.clearIterateInterval();
+    this.findNodes();
+    this.setState(SCANNER_INITIAL_STATE, this.iterateScannableElements);
+  };
+
   render() {
     const { children, active } = this.props;
     const focusedItem =
@@ -221,7 +230,8 @@ class Scanner extends React.Component {
       config: this.config,
       focusedItem,
       addScannableElement: this.addScannableElement,
-      updateScannableElement: this.updateScannableElement
+      updateScannableElement: this.updateScannableElement,
+      reset: this.reset
     };
 
     const classes = active ? this.config.scannerClassNameActive : this.config.scannerClassName;
