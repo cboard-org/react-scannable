@@ -9,6 +9,7 @@ const checkVisibleAndScroll = (element, threshold = 0, mode = 'visible') => {
   if (!isVisible) {
     const elementPosY = scrollY + rect.top - fixedThreshold;
     window.scrollTo(scrollX, elementPosY);
+    element.scrollIntoView();
   }
 };
 

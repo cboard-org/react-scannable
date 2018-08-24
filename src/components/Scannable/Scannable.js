@@ -11,10 +11,21 @@ class Scannable extends React.Component {
     this.scannableId = uuidv4();
   }
 
+  isEnabled() {
+    return !this.props.disabled;
+  }
+
   componentDidMount() {
     const { scanner } = this.props;
     if (scanner && scanner.addScannableElement) {
       scanner.addScannableElement(this);
+    }
+  }
+
+  componentDidUpdate({ disabled }) {
+    if (disabled !== this.props.disabled) {
+      const { scanner } = this.props;
+      scanner.updateScannableElement(this);
     }
   }
 
@@ -25,6 +36,7 @@ class Scannable extends React.Component {
         focusedItem,
         config: { focusedClassName, focusedVisibleThreshold }
       },
+      disabled,
       ...other
     } = this.props;
 
@@ -44,10 +56,13 @@ class Scannable extends React.Component {
   }
 }
 
-Scannable.defaultProps = {};
+Scannable.defaultProps = {
+  disabled: false
+};
 
 Scannable.propTypes = {
   children: PropTypes.node.isRequired,
+  disabled: PropTypes.bool,
   scanner: PropTypes.object.isRequired
 };
 

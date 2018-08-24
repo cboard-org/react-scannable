@@ -21,9 +21,9 @@ initialState = { isActive: false };
             </span>
           </span>
         </span>
-        <Scannable>
+        <Scannable disabled>
           <button type="button" onClick={() => alert('Button #1.2')}>
-            1.2
+            1.2 (disabled scannable)
           </button>
         </Scannable>
         <Scannable>
