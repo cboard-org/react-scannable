@@ -1,5 +1,11 @@
+export const SCANNER_STRATEGY = 'automatic';
 export const SCANNER_EVENTS = ['click', 'keydown', 'contextmenu'];
 export const SCANNER_CLASSNAME = 'Scanner__Container';
+export const SCANNER_SELECT_DEBOUNCE_TIME = 400;
+export const SCANNER_SELECT_KEYCODES = ['enter', 'backspace', 13, 8];
+export const SCANNER_ADVANCE_KEYCODES = ['*', 'spacebar', 'tab', 32, 9];
+export const SCANNER_SELECT_CLICKEVENT = 'contextmenu';
+export const SCANNER_ADVANCE_CLICKEVENT = 'click';
 export const SCANNER_CLASSNAME_ACTIVE = 'Scanner__Container Scanner__Container--active';
 export const SCANNER_ITERATION_INTERVAL = 2000;
 export const SCANNABLE_FOCUSED_CLASSNAME = 'scanner__focused';

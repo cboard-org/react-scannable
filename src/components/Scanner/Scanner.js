@@ -2,18 +2,25 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import ScannerContext from './Scanner.context';
-import getTreeForElement from '../../utils/getTreeForElement';
 import {
   SCANNER_CLASSNAME,
   SCANNER_CLASSNAME_ACTIVE,
   SCANNER_ITERATION_INTERVAL,
   SCANNABLE_FOCUSED_CLASSNAME,
   SCANNABLE_FOCUSED_VISIBLE_THRESHOLD,
-  SCANNER_EVENTS
+  SCANNER_EVENTS,
+  SCANNER_STRATEGY,
+  SCANNER_SELECT_KEYCODES,
+  SCANNER_ADVANCE_KEYCODES,
+  SCANNER_SELECT_CLICKEVENT,
+  SCANNER_ADVANCE_CLICKEVENT,
+  SCANNER_SELECT_DEBOUNCE_TIME
 } from '../../constants';
-import dispatchEvent from '../../utils/dispatchEvent';
+import utils from '../../utils';
 
 import './Scanner.css';
+
+const { getConfig, getStrategy, getTreeForElement, debounce } = utils;
 
 const SCANNER_INITIAL_STATE = {
   selectedPath: [],
@@ -25,22 +32,18 @@ const SCANNER_INITIAL_STATE = {
 class Scanner extends React.Component {
   constructor(props) {
     super(props);
-    this.target = document.body;
+    this.state = SCANNER_INITIAL_STATE;
     this.scannerNode = null;
     this.elements = {};
     this.tree = {};
     this.selectedElement = null;
+    this.config = getConfig(props);
+    this.target = this.config.target;
+    this.strategy = getStrategy(this.config.strategy, this);
 
-    this.config = {
-      scannerEvents: props.scannerEvents,
-      scannerClassName: props.scannerClassName,
-      scannerClassNameActive: props.scannerClassNameActive,
-      iterationInterval: props.iterationInterval,
-      focusedClassName: props.focusedClassName,
-      focusedVisibleThreshold: props.focusedVisibleThreshold
-    };
-
-    this.state = SCANNER_INITIAL_STATE;
+    this.debouncedSelectElement = debounce((element, event) => {
+      this.selectElement(element, event);
+    }, this.config.selectDebounceTime);
   }
 
   componentDidMount() {
@@ -54,7 +57,7 @@ class Scanner extends React.Component {
 
   componentWillUnmount() {
     this.unregisterEvents();
-    this.clearIterateInterval();
+    this.strategy.deactivate();
   }
 
   componentDidUpdate(prevProps) {
@@ -63,40 +66,8 @@ class Scanner extends React.Component {
         this.findNodes();
         this.iterateScannableElements();
       } else {
-        this.clearIterateInterval();
+        this.strategy.deactivate();
       }
-    }
-  }
-
-  registerEvents() {
-    this.config.scannerEvents.forEach(e =>
-      this.target.addEventListener(e, this.scannerEventAction)
-    );
-  }
-
-  unregisterEvents() {
-    this.config.scannerEvents.forEach(e =>
-      this.target.removeEventListener(e, this.scannerEventAction)
-    );
-  }
-
-  scannerEventAction = event => {
-    const { active } = this.props;
-
-    if (active && !this.selectedElement) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      const elementToSelect = this.state.elementsToIterate[this.state.focusedId];
-      if (elementToSelect) {
-        this.selectElement(elementToSelect, event);
-      }
-    }
-  };
-
-  clearIterateInterval() {
-    if (this.iterateIntervalFn) {
-      clearInterval(this.iterateIntervalFn);
     }
   }
 
@@ -143,54 +114,64 @@ class Scanner extends React.Component {
 
   selectElement(scannable, event) {
     if (scannable && scannable.treeId) {
-      let selectedPath = [];
-      if (scannable.children) {
-        selectedPath = this.state.selectedPath.concat(scannable.treeId);
-      } else {
-        this.selectedElement = scannable;
-        dispatchEvent(scannable, event);
-        scannable.element.onSelect(event);
-      }
-      this.setState({ selectedPath }, this.iterateScannableElements);
+      this.strategy.selectElement(scannable, event);
     }
   }
 
-  getNextScannableId(
-    focusedId = this.state.focusedId,
-    elementsToIterate = this.state.elementsToIterate,
-    keysToIterate = this.state.keysToIterate
-  ) {
-    const nextFocusedIndex = keysToIterate.indexOf(focusedId) + 1;
+  setSelectedElement(scannable, event) {
+    this.selectedElement = scannable;
 
-    return nextFocusedIndex < keysToIterate.length
-      ? keysToIterate[nextFocusedIndex]
-      : keysToIterate[0];
+    this.props.onSelect(event, scannable, this);
   }
 
-  selectNextScannable(keysToIterate = this.state.keysToIterate) {
-    const focusedId = this.getNextScannableId();
+  setSelectedPath(selectedPath = this.state.selectedPath) {
+    this.setState({ selectedPath }, this.iterateScannableElements);
+  }
+
+  focusScannable(focusedId) {
     this.setState({ focusedId });
   }
 
   iterateScannableElements(focusedId = this.state.focusedId) {
-    this.clearIterateInterval();
     this.selectedElement = null;
 
     const { elementsToIterate, keysToIterate } = this.getElementsToIterate();
-    if (keysToIterate.length) {
-      this.iterateIntervalFn = setInterval(() => {
-        this.selectNextScannable();
-      }, this.config.iterationInterval);
-    }
 
     const newFocusedId = elementsToIterate[focusedId] ? focusedId : keysToIterate[0];
 
-    this.setState({
-      elementsToIterate,
-      keysToIterate,
-      focusedId: newFocusedId
-    });
+    this.setState(
+      {
+        elementsToIterate,
+        keysToIterate,
+        focusedId: newFocusedId
+      },
+      () => {
+        this.strategy.activate();
+      }
+    );
   }
+
+  registerEvents() {
+    this.config.events.forEach(e => this.target.addEventListener(e, this.scannerEventAction));
+  }
+
+  unregisterEvents() {
+    this.config.events.forEach(e => this.target.removeEventListener(e, this.scannerEventAction));
+  }
+
+  scannerEventAction = event => {
+    const { active } = this.props;
+
+    if (active && !this.selectedElement) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const elementToSelect = this.state.elementsToIterate[this.state.focusedId];
+      if (elementToSelect) {
+        this.debouncedSelectElement(elementToSelect, event);
+      }
+    }
+  };
 
   addScannableElement = element => {
     this.elements[element.scannableId] = {
@@ -207,7 +188,7 @@ class Scanner extends React.Component {
 
     let focusedId = this.state.focusedId;
     if (element.scannableId === focusedId) {
-      focusedId = this.getNextScannableId(focusedId);
+      focusedId = this.strategy.getNextScannableId(focusedId);
     }
 
     this.findNodes();
@@ -215,7 +196,7 @@ class Scanner extends React.Component {
   };
 
   reset = () => {
-    this.clearIterateInterval();
+    this.strategy.deactivate();
     this.findNodes();
     this.setState(SCANNER_INITIAL_STATE, this.iterateScannableElements);
   };
@@ -234,7 +215,7 @@ class Scanner extends React.Component {
       reset: this.reset
     };
 
-    const classes = active ? this.config.scannerClassNameActive : this.config.scannerClassName;
+    const classes = active ? this.config.classNameActive : this.config.className;
 
     return (
       <ScannerContext.Provider value={contextValue}>
@@ -246,23 +227,39 @@ class Scanner extends React.Component {
 
 Scanner.defaultProps = {
   active: false,
-  scannerEvents: SCANNER_EVENTS,
-  scannerClassName: SCANNER_CLASSNAME,
-  scannerClassNameActive: SCANNER_CLASSNAME_ACTIVE,
-  iterationInterval: SCANNER_ITERATION_INTERVAL,
+  advanceKeyCodes: SCANNER_ADVANCE_KEYCODES,
+  advanceClickEvent: SCANNER_ADVANCE_CLICKEVENT,
+  className: SCANNER_CLASSNAME,
+  classNameActive: SCANNER_CLASSNAME_ACTIVE,
+  events: SCANNER_EVENTS,
   focusedClassName: SCANNABLE_FOCUSED_CLASSNAME,
-  focusedVisibleThreshold: SCANNABLE_FOCUSED_VISIBLE_THRESHOLD
+  focusedVisibleThreshold: SCANNABLE_FOCUSED_VISIBLE_THRESHOLD,
+  iterationInterval: SCANNER_ITERATION_INTERVAL,
+  onSelect: () => {},
+  selectClickEvent: SCANNER_SELECT_CLICKEVENT,
+  selectDebounceTime: SCANNER_SELECT_DEBOUNCE_TIME,
+  selectKeyCodes: SCANNER_SELECT_KEYCODES,
+  strategy: SCANNER_STRATEGY,
+  target: document.body
 };
 
 Scanner.propTypes = {
-  children: PropTypes.node.isRequired,
   active: PropTypes.bool,
-  scannerEvents: PropTypes.arrayOf(PropTypes.string),
-  scannerClassName: PropTypes.string,
-  scannerClassNameActive: PropTypes.string,
-  iterationInterval: PropTypes.number,
+  advanceKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+  advanceClickEvent: PropTypes.string,
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string,
+  classNameActive: PropTypes.string,
+  events: PropTypes.arrayOf(PropTypes.string),
   focusedClassName: PropTypes.string,
-  focusedVisibleThreshold: PropTypes.number
+  focusedVisibleThreshold: PropTypes.number,
+  iterationInterval: PropTypes.number,
+  onSelect: PropTypes.func,
+  selectClickEvent: PropTypes.string,
+  selectDebounceTime: PropTypes.number,
+  selectKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+  strategy: PropTypes.string,
+  target: PropTypes.instanceOf(Element)
 };
 
 export default Scanner;

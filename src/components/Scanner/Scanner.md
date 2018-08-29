@@ -1,6 +1,6 @@
 ```js
 initialState = { isActive: false };
-<Scanner active={state.isActive}>
+<Scanner strategy="automatic" active={state.isActive}>
   <Scannable>
     <button type="button" onClick={() => setState({ isActive: !state.isActive })}>
       {state.isActive ? 'Deactivate' : 'Activate'}
