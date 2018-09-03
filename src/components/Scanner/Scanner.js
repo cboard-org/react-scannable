@@ -129,12 +129,7 @@ class Scanner extends React.Component {
   }
 
   focusScannable(focusedId) {
-    this.setState({ focusedId }, () => {
-      const { element } = this.state.elementsToIterate[focusedId] || {};
-      if (element) {
-        this.props.onFocus(element, this);
-      }
-    });
+    this.setState({ focusedId }, this.onScannableFocus);
   }
 
   iterateScannableElements(focusedId = this.state.focusedId) {
@@ -151,6 +146,7 @@ class Scanner extends React.Component {
         focusedId: newFocusedId
       },
       () => {
+        this.onScannableFocus(newFocusedId);
         this.strategy.activate();
       }
     );
@@ -202,6 +198,13 @@ class Scanner extends React.Component {
 
     this.findNodes();
     this.iterateScannableElements(focusedId);
+  };
+
+  onScannableFocus = (focusedId = this.state.focusedId) => {
+    const { element } = this.state.elementsToIterate[focusedId] || {};
+    if (element) {
+      this.props.onFocus(element, this);
+    }
   };
 
   reset = () => {
