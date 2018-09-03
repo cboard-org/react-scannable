@@ -129,7 +129,12 @@ class Scanner extends React.Component {
   }
 
   focusScannable(focusedId) {
-    this.setState({ focusedId });
+    this.setState({ focusedId }, () => {
+      const { element } = this.state.elementsToIterate[focusedId] || {};
+      if (element) {
+        this.props.onFocus(element, this);
+      }
+    });
   }
 
   iterateScannableElements(focusedId = this.state.focusedId) {
@@ -178,6 +183,10 @@ class Scanner extends React.Component {
       element,
       node: ReactDOM.findDOMNode(element)
     };
+
+    if (this.props.active) {
+      this.findNodes();
+    }
   };
 
   updateScannableElement = element => {
@@ -236,6 +245,7 @@ Scanner.defaultProps = {
   focusedVisibleThreshold: SCANNABLE_FOCUSED_VISIBLE_THRESHOLD,
   iterationInterval: SCANNER_ITERATION_INTERVAL,
   onSelect: () => {},
+  onFocus: () => {},
   selectClickEvent: SCANNER_SELECT_CLICKEVENT,
   selectDebounceTime: SCANNER_SELECT_DEBOUNCE_TIME,
   selectKeyCodes: SCANNER_SELECT_KEYCODES,
@@ -255,6 +265,7 @@ Scanner.propTypes = {
   focusedVisibleThreshold: PropTypes.number,
   iterationInterval: PropTypes.number,
   onSelect: PropTypes.func,
+  onFocus: PropTypes.func,
   selectClickEvent: PropTypes.string,
   selectDebounceTime: PropTypes.number,
   selectKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
