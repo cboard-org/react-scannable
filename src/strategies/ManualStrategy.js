@@ -1,21 +1,27 @@
 import BaseStrategy from './BaseStrategy';
-
-const KEY_CODE_MAP = {
-  enter: 13,
-  backspace: 8,
-  spacebar: 32,
-  tab: 9
-};
+import { KEY_CODE_MAP } from '../constants';
 
 class ManualStrategy extends BaseStrategy {
   constructor(scanner) {
     super(scanner);
 
-    const { selectClickEvent, advanceClickEvent, selectKeyCodes, advanceKeyCodes } = scanner.config;
+    const {
+      selectClickEvent,
+      advanceClickEvent,
+      selectKeyCodes,
+      advanceKeyCodes,
+      autoDeactivateKeyCodes
+    } = scanner.config;
     this.selectClickEvent = selectClickEvent;
     this.advanceClickEvent = advanceClickEvent;
     this.selectKeyCodes = new Set(selectKeyCodes.map(kc => KEY_CODE_MAP[kc] || kc));
     this.advanceKeyCodes = new Set(advanceKeyCodes.map(kc => KEY_CODE_MAP[kc] || kc));
+
+    this.autoDeactivationCounter = 0;
+    this.autoDeactivationToutFn = null;
+    this.autoDeactivationKeyCodes = new Set(
+      autoDeactivateKeyCodes.map(kc => KEY_CODE_MAP[kc] || kc)
+    );
 
     this.isActive = false;
   }
@@ -26,6 +32,32 @@ class ManualStrategy extends BaseStrategy {
 
   deactivate() {
     this.isActive = false;
+  }
+
+  checkAutoDeactivation(event) {
+    const { type: eventType, keyCode } = event;
+    if (eventType === 'keydown') {
+      if (this.autoDeactivationKeyCodes.has(keyCode)) {
+        if (this.autoDeactivationToutFn) {
+          clearTimeout(this.autoDeactivationToutFn);
+        }
+
+        this.autoDeactivationCounter = this.autoDeactivationCounter + 1;
+        if (this.autoDeactivationCounter >= this.scanner.config.autoDeactivateCount) {
+          this.deactivate();
+          this.scanner.triggerDeactivation();
+          this.autoDeactivationCounter = 0;
+        } else {
+          this.autoDeactivationToutFn = setTimeout(() => {
+            this.autoDeactivationCounter = 0;
+          }, 600);
+        }
+
+        return false;
+      }
+    }
+
+    return true;
   }
 
   selectElement(scannable, event) {

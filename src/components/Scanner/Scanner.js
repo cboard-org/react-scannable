@@ -14,7 +14,9 @@ import {
   SCANNER_ADVANCE_KEYCODES,
   SCANNER_SELECT_CLICKEVENT,
   SCANNER_ADVANCE_CLICKEVENT,
-  SCANNER_SELECT_DEBOUNCE_TIME
+  SCANNER_SELECT_DEBOUNCE_TIME,
+  SCANNER_AUTODEACTIVATE_KEYCODES,
+  SCANNER_AUTODEACTIVATE_COUNT
 } from '../../constants';
 import utils from '../../utils';
 
@@ -67,8 +69,14 @@ class Scanner extends React.Component {
         this.iterateScannableElements();
       } else {
         this.strategy.deactivate();
+        this.setState(SCANNER_INITIAL_STATE);
       }
     }
+  }
+
+  triggerDeactivation() {
+    this.props.onDeactivation();
+    this.setState(SCANNER_INITIAL_STATE);
   }
 
   findNodes() {
@@ -163,7 +171,16 @@ class Scanner extends React.Component {
   scannerEventAction = event => {
     const { active } = this.props;
 
-    if (active && !this.selectedElement) {
+    let shouldContinue = true;
+    if (this.config.autoDeactivateCount) {
+      shouldContinue = this.strategy.checkAutoDeactivation(event);
+    }
+
+    if (!shouldContinue) {
+      this.props.onAutoDeactivateAction(event);
+    }
+
+    if (active && shouldContinue && !this.selectedElement) {
       event.preventDefault();
       event.stopPropagation();
 
@@ -239,6 +256,8 @@ class Scanner extends React.Component {
 
 Scanner.defaultProps = {
   active: false,
+  autoDeactivateCount: SCANNER_AUTODEACTIVATE_COUNT,
+  autoDeactivateKeyCodes: SCANNER_AUTODEACTIVATE_KEYCODES,
   advanceKeyCodes: SCANNER_ADVANCE_KEYCODES,
   advanceClickEvent: SCANNER_ADVANCE_CLICKEVENT,
   className: SCANNER_CLASSNAME,
@@ -249,6 +268,8 @@ Scanner.defaultProps = {
   iterationInterval: SCANNER_ITERATION_INTERVAL,
   onSelect: () => {},
   onFocus: () => {},
+  onAutoDeactivateAction: () => {},
+  onDeactivation: () => {},
   selectClickEvent: SCANNER_SELECT_CLICKEVENT,
   selectDebounceTime: SCANNER_SELECT_DEBOUNCE_TIME,
   selectKeyCodes: SCANNER_SELECT_KEYCODES,
@@ -258,6 +279,10 @@ Scanner.defaultProps = {
 
 Scanner.propTypes = {
   active: PropTypes.bool,
+  autoDeactivateCount: PropTypes.number,
+  autoDeactivateKeyCodes: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  ),
   advanceKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
   advanceClickEvent: PropTypes.string,
   children: PropTypes.node.isRequired,
@@ -269,6 +294,8 @@ Scanner.propTypes = {
   iterationInterval: PropTypes.number,
   onSelect: PropTypes.func,
   onFocus: PropTypes.func,
+  onAutoDeactivateAction: PropTypes.func,
+  onDeactivation: PropTypes.func,
   selectClickEvent: PropTypes.string,
   selectDebounceTime: PropTypes.number,
   selectKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),

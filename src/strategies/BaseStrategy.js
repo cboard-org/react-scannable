@@ -14,6 +14,10 @@ class BaseStrategy {
     console.log('Scanner should be deactivated');
   }
 
+  checkAutoDeactivation(event) {
+    console.log('Strategy should provide a checkAutoDeactivation function');
+  }
+
   getNextScannableId(focusedId = this.scanner.state.focusedId) {
     const { keysToIterate } = this.scanner.state;
     const nextFocusedIndex = keysToIterate.indexOf(focusedId) + 1;
