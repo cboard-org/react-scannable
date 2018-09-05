@@ -9,6 +9,7 @@ class Scannable extends React.Component {
     super(props);
 
     this.scannableId = uuidv4();
+    this.isFocused = false;
   }
 
   isEnabled() {
@@ -34,7 +35,7 @@ class Scannable extends React.Component {
   }
 
   render() {
-    const { children, scanner, disabled, onFocus, ...other } = this.props;
+    const { children, scanner, disabled, onFocus, onBlur, ...other } = this.props;
     const {
       focusedItem,
       config: { focusedClassName, focusedVisibleThreshold }
@@ -43,11 +44,15 @@ class Scannable extends React.Component {
     const childrenWithProps = React.Children.map(children, child => {
       const classes = [child.props.className || ''];
       const isFocused = focusedItem.element && focusedItem.element.scannableId === this.scannableId;
+      const isBlurred = this.isFocused && !isFocused;
+      this.isFocused = isFocused;
 
       if (isFocused) {
         classes.push(focusedClassName);
         checkVisibleAndScroll(focusedItem.node, focusedVisibleThreshold);
         onFocus(this, scanner);
+      } else if (isBlurred) {
+        onBlur(this, scanner);
       }
 
       const className = classes.join(' ').trim();
@@ -61,6 +66,7 @@ class Scannable extends React.Component {
 Scannable.defaultProps = {
   disabled: false,
   onFocus: () => {},
+  onBlur: () => {},
   onSelect: () => {}
 };
 
@@ -69,6 +75,7 @@ Scannable.propTypes = {
   scanner: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
   onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
   onSelect: PropTypes.func
 };
 
