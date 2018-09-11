@@ -40,12 +40,12 @@ class Scanner extends React.Component {
     this.tree = {};
     this.selectedElement = null;
     this.config = getConfig(props);
-    this.target = this.config.target;
     this.strategy = getStrategy(this.config.strategy, this);
-
     this.debouncedSelectElement = debounce((element, event) => {
       this.selectElement(element, event);
     }, this.config.selectDebounceTime);
+
+    this.target = this.config.target;
   }
 
   componentDidMount() {
@@ -72,6 +72,17 @@ class Scanner extends React.Component {
         this.setState(SCANNER_INITIAL_STATE);
       }
     }
+
+    const newConfig = getConfig(this.props);
+    if (newConfig.strategy !== this.config.strategy) {
+      this.strategy.deactivate();
+      this.strategy = getStrategy(newConfig.strategy, this);
+    }
+
+    this.config = newConfig;
+    this.debouncedSelectElement = debounce((element, event) => {
+      this.selectElement(element, event);
+    }, this.config.selectDebounceTime);
   }
 
   triggerDeactivation() {
