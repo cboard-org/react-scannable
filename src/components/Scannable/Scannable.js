@@ -36,28 +36,31 @@ class Scannable extends React.Component {
 
   render() {
     const { children, scanner, disabled, onFocus, onBlur, ...other } = this.props;
-    const {
-      focusedItem,
-      config: { focusedClassName, focusedVisibleThreshold }
-    } = scanner;
+    const { focusedItem, config } = scanner;
 
-    const childrenWithProps = React.Children.map(children, child => {
-      const classes = [child.props.className || ''];
-      const isFocused = focusedItem.element && focusedItem.element.scannableId === this.scannableId;
-      const isBlurred = this.isFocused && !isFocused;
-      this.isFocused = isFocused;
+    let childrenWithProps = children;
 
-      if (isFocused) {
-        classes.push(focusedClassName);
-        checkVisibleAndScroll(focusedItem.node, focusedVisibleThreshold);
-        onFocus(this, scanner);
-      } else if (isBlurred) {
-        onBlur(this, scanner);
-      }
+    if (config) {
+      const { focusedClassName, focusedVisibleThreshold } = config;
+      childrenWithProps = React.Children.map(children, child => {
+        const classes = [child.props.className || ''];
+        const isFocused =
+          focusedItem.element && focusedItem.element.scannableId === this.scannableId;
+        const isBlurred = this.isFocused && !isFocused;
+        this.isFocused = isFocused;
 
-      const className = classes.join(' ').trim();
-      return React.cloneElement(child, { className, ...other });
-    });
+        if (isFocused) {
+          classes.push(focusedClassName);
+          checkVisibleAndScroll(focusedItem.node, focusedVisibleThreshold);
+          onFocus(this, scanner);
+        } else if (isBlurred) {
+          onBlur(this, scanner);
+        }
+
+        const className = classes.join(' ').trim();
+        return React.cloneElement(child, { className, ...other });
+      });
+    }
 
     return <React.Fragment>{childrenWithProps}</React.Fragment>;
   }
