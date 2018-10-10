@@ -27,6 +27,15 @@ class BaseStrategy {
       : keysToIterate[0];
   }
 
+  getPrevScannableId(focusedId = this.scanner.state.focusedId) {
+    const { keysToIterate } = this.scanner.state;
+    const nextFocusedIndex = keysToIterate.indexOf(focusedId) - 1;
+
+    return nextFocusedIndex >= 0
+      ? keysToIterate[nextFocusedIndex]
+      : keysToIterate[keysToIterate.length - 1];
+  }
+
   dispatchEvent(scannable, event) {
     this.scanner.setSelectedElement(scannable, event);
     utils.dispatchEvent(scannable, event);

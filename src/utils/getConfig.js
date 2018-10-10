@@ -1,6 +1,7 @@
 const configKeys = [
   'advanceClickEvent',
   'advanceKeyCodes',
+  'moveBackKeyCodes',
   'autoDeactivateCount',
   'autoDeactivateKeyCodes',
   'className',

@@ -16,7 +16,8 @@ import {
   SCANNER_ADVANCE_CLICKEVENT,
   SCANNER_SELECT_DEBOUNCE_TIME,
   SCANNER_AUTODEACTIVATE_KEYCODES,
-  SCANNER_AUTODEACTIVATE_COUNT
+  SCANNER_AUTODEACTIVATE_COUNT,
+  SCANNER_MOVE_BACK_KEYS
 } from '../../constants';
 import utils from '../../utils';
 
@@ -271,6 +272,7 @@ Scanner.defaultProps = {
   autoDeactivateKeyCodes: SCANNER_AUTODEACTIVATE_KEYCODES,
   advanceKeyCodes: SCANNER_ADVANCE_KEYCODES,
   advanceClickEvent: SCANNER_ADVANCE_CLICKEVENT,
+  moveBackKeyCodes: SCANNER_MOVE_BACK_KEYS,
   className: SCANNER_CLASSNAME,
   classNameActive: SCANNER_CLASSNAME_ACTIVE,
   events: SCANNER_EVENTS,
@@ -296,6 +298,7 @@ Scanner.propTypes = {
   ),
   advanceKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
   advanceClickEvent: PropTypes.string,
+  moveBackKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
   classNameActive: PropTypes.string,

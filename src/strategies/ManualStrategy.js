@@ -8,6 +8,7 @@ class ManualStrategy extends BaseStrategy {
     const {
       selectClickEvent,
       advanceClickEvent,
+      moveBackKeyCodes,
       selectKeyCodes,
       advanceKeyCodes,
       autoDeactivateKeyCodes
@@ -16,6 +17,7 @@ class ManualStrategy extends BaseStrategy {
     this.advanceClickEvent = advanceClickEvent;
     this.selectKeyCodes = new Set(selectKeyCodes.map(kc => KEY_CODE_MAP[kc] || kc));
     this.advanceKeyCodes = new Set(advanceKeyCodes.map(kc => KEY_CODE_MAP[kc] || kc));
+    this.moveBackKeyCodes = new Set(moveBackKeyCodes.map(kc => KEY_CODE_MAP[kc] || kc));
 
     this.autoDeactivationCounter = 0;
     this.autoDeactivationToutFn = null;
@@ -62,13 +64,14 @@ class ManualStrategy extends BaseStrategy {
 
   selectElement(scannable, event) {
     const { type: eventType, keyCode } = event;
+    const reverse = this.moveBackKeyCodes.has(keyCode);
 
     switch (eventType) {
       case 'keydown':
         if (this.selectKeyCodes.has(keyCode)) {
           this.select(scannable, event);
-        } else if (this.advanceKeyCodes.has(keyCode) || this.advanceKeyCodes.has('*')) {
-          this.advance(scannable, event);
+        } else if (reverse || this.advanceKeyCodes.has(keyCode) || this.advanceKeyCodes.has('*')) {
+          this.advance(scannable, event, reverse);
         }
         break;
 
@@ -85,8 +88,9 @@ class ManualStrategy extends BaseStrategy {
     }
   }
 
-  advance(scannable, event) {
-    const newFocusedId = this.getNextScannableId();
+  advance(scannable, event, reverse = false) {
+    const action = reverse ? 'getPrevScannableId' : 'getNextScannableId';
+    const newFocusedId = this[action]();
     this.scanner.focusScannable(newFocusedId);
   }
 
