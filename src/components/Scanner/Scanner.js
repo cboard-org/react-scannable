@@ -20,6 +20,7 @@ import {
   SCANNER_MOVE_BACK_KEYS
 } from '../../constants';
 import utils from '../../utils';
+import '../../utils/polyfill';
 
 import './Scanner.css';
 
