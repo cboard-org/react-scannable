@@ -14,14 +14,14 @@ const configKeys = [
   'selectDebounceTime',
   'selectKeyCodes',
   'strategy',
-  'target'
+  'target',
 ];
 
-const getConfig = props => {
+const getConfig = (props) => {
   const config = {};
-  const propsKeys = Object.keys(props).filter(k => configKeys.indexOf(k) >= 0);
+  const propsKeys = Object.keys(props).filter((k) => configKeys.indexOf(k) >= 0);
 
-  propsKeys.forEach(k => {
+  propsKeys.forEach((k) => {
     config[k] = props[k];
   });
 

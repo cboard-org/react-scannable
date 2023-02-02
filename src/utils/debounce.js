@@ -10,7 +10,7 @@ const debounce = (callback, time = 250, immediate = true) => {
     }
 
     clearTimeout(timeout);
-    timeout = setTimeout(function() {
+    timeout = setTimeout(function () {
       timeout = null;
       if (!immediate) {
         callback(...args);

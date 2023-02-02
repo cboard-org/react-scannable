@@ -3,7 +3,7 @@ const dispatchEvent = (element, event) => {
   var eventToDispatch = new MouseEvent('click', {
     view: window,
     bubbles: true,
-    cancelable: false
+    cancelable: false,
   });
 
   node.dispatchEvent(eventToDispatch);

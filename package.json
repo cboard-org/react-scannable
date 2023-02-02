@@ -18,7 +18,8 @@
     "prepare": "yarn run build",
     "predeploy": "yarn run styleguide:build",
     "deploy": "gh-pages -d styleguide",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "prettier": "prettier --write \"**/*.{js,jsx,json,css,md}\""
   },
   "lint-staged": {
     "*.{js,json,css,md}": [

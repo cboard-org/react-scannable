@@ -42,7 +42,7 @@ class Scannable extends React.Component {
 
     if (config) {
       const { focusedClassName, focusedVisibleThreshold } = config;
-      childrenWithProps = React.Children.map(children, child => {
+      childrenWithProps = React.Children.map(children, (child) => {
         const classes = [child.props.className || ''];
         const isFocused =
           focusedItem.element && focusedItem.element.scannableId === this.scannableId;
@@ -70,7 +70,7 @@ Scannable.defaultProps = {
   disabled: false,
   onFocus: () => {},
   onBlur: () => {},
-  onSelect: () => {}
+  onSelect: () => {},
 };
 
 Scannable.propTypes = {
@@ -79,13 +79,13 @@ Scannable.propTypes = {
   disabled: PropTypes.bool,
   onFocus: PropTypes.func,
   onBlur: PropTypes.func,
-  onSelect: PropTypes.func
+  onSelect: PropTypes.func,
 };
 
-const WithScanner = Component => {
-  return props => (
+const WithScanner = (Component) => {
+  return (props) => (
     <ScannerContext.Consumer>
-      {scannerContext => <Component {...props} scanner={scannerContext} />}
+      {(scannerContext) => <Component {...props} scanner={scannerContext} />}
     </ScannerContext.Consumer>
   );
 };

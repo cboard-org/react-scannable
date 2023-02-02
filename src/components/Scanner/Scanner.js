@@ -17,7 +17,7 @@ import {
   SCANNER_SELECT_DEBOUNCE_TIME,
   SCANNER_AUTODEACTIVATE_KEYCODES,
   SCANNER_AUTODEACTIVATE_COUNT,
-  SCANNER_MOVE_BACK_KEYS
+  SCANNER_MOVE_BACK_KEYS,
 } from '../../constants';
 import utils from '../../utils';
 import '../../utils/polyfill';
@@ -30,7 +30,7 @@ const SCANNER_INITIAL_STATE = {
   selectedPath: [],
   elementsToIterate: {},
   keysToIterate: [],
-  focusedId: 'not-valid-id'
+  focusedId: 'not-valid-id',
 };
 
 class Scanner extends React.Component {
@@ -106,7 +106,7 @@ class Scanner extends React.Component {
     if (!active) {
       return {
         elementsToIterate,
-        keysToIterate
+        keysToIterate,
       };
     }
 
@@ -123,13 +123,13 @@ class Scanner extends React.Component {
     }
 
     elementsToIterate = current.children || {};
-    keysToIterate = Object.keys(elementsToIterate).filter(k =>
+    keysToIterate = Object.keys(elementsToIterate).filter((k) =>
       elementsToIterate[k].element.isEnabled()
     );
 
     return {
       elementsToIterate,
-      keysToIterate
+      keysToIterate,
     };
   }
 
@@ -164,7 +164,7 @@ class Scanner extends React.Component {
       {
         elementsToIterate,
         keysToIterate,
-        focusedId: newFocusedId
+        focusedId: newFocusedId,
       },
       () => {
         this.onScannableFocus(newFocusedId);
@@ -174,14 +174,14 @@ class Scanner extends React.Component {
   }
 
   registerEvents() {
-    this.config.events.forEach(e => this.target.addEventListener(e, this.scannerEventAction));
+    this.config.events.forEach((e) => this.target.addEventListener(e, this.scannerEventAction));
   }
 
   unregisterEvents() {
-    this.config.events.forEach(e => this.target.removeEventListener(e, this.scannerEventAction));
+    this.config.events.forEach((e) => this.target.removeEventListener(e, this.scannerEventAction));
   }
 
-  scannerEventAction = event => {
+  scannerEventAction = (event) => {
     const { active } = this.props;
 
     let shouldContinue = true;
@@ -204,10 +204,10 @@ class Scanner extends React.Component {
     }
   };
 
-  addScannableElement = element => {
+  addScannableElement = (element) => {
     this.elements[element.scannableId] = {
       element,
-      node: ReactDOM.findDOMNode(element)
+      node: ReactDOM.findDOMNode(element),
     };
 
     if (this.props.active) {
@@ -215,10 +215,10 @@ class Scanner extends React.Component {
     }
   };
 
-  updateScannableElement = element => {
+  updateScannableElement = (element) => {
     this.elements[element.scannableId] = {
       element,
-      node: ReactDOM.findDOMNode(element)
+      node: ReactDOM.findDOMNode(element),
     };
 
     let focusedId = this.state.focusedId;
@@ -254,7 +254,7 @@ class Scanner extends React.Component {
       focusedItem,
       addScannableElement: this.addScannableElement,
       updateScannableElement: this.updateScannableElement,
-      reset: this.reset
+      reset: this.reset,
     };
 
     const classes = active ? this.config.classNameActive : this.config.className;
@@ -288,7 +288,7 @@ Scanner.defaultProps = {
   selectDebounceTime: SCANNER_SELECT_DEBOUNCE_TIME,
   selectKeyCodes: SCANNER_SELECT_KEYCODES,
   strategy: SCANNER_STRATEGY,
-  target: document.body
+  target: document.body,
 };
 
 Scanner.propTypes = {
@@ -315,7 +315,7 @@ Scanner.propTypes = {
   selectDebounceTime: PropTypes.number,
   selectKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
   strategy: PropTypes.string,
-  target: PropTypes.instanceOf(Element)
+  target: PropTypes.instanceOf(Element),
 };
 
 export default Scanner;

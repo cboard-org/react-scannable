@@ -26,5 +26,5 @@ export const KEY_CODE_MAP = {
   upArrow: 38,
   rightArrow: 39,
   downArrow: 40,
-  escape: 27
+  escape: 27,
 };

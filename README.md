@@ -18,7 +18,7 @@ import { Scannable, Scanner } from 'react-scannable';
 
 class Example extends Component {
   state = {
-    isActive: true
+    isActive: true,
   };
 
   render() {

@@ -11,18 +11,18 @@ class ManualStrategy extends BaseStrategy {
       moveBackKeyCodes,
       selectKeyCodes,
       advanceKeyCodes,
-      autoDeactivateKeyCodes
+      autoDeactivateKeyCodes,
     } = scanner.config;
     this.selectClickEvent = selectClickEvent;
     this.advanceClickEvent = advanceClickEvent;
-    this.selectKeyCodes = new Set(selectKeyCodes.map(kc => KEY_CODE_MAP[kc] || kc));
-    this.advanceKeyCodes = new Set(advanceKeyCodes.map(kc => KEY_CODE_MAP[kc] || kc));
-    this.moveBackKeyCodes = new Set(moveBackKeyCodes.map(kc => KEY_CODE_MAP[kc] || kc));
+    this.selectKeyCodes = new Set(selectKeyCodes.map((kc) => KEY_CODE_MAP[kc] || kc));
+    this.advanceKeyCodes = new Set(advanceKeyCodes.map((kc) => KEY_CODE_MAP[kc] || kc));
+    this.moveBackKeyCodes = new Set(moveBackKeyCodes.map((kc) => KEY_CODE_MAP[kc] || kc));
 
     this.autoDeactivationCounter = 0;
     this.autoDeactivationToutFn = null;
     this.autoDeactivationKeyCodes = new Set(
-      autoDeactivateKeyCodes.map(kc => KEY_CODE_MAP[kc] || kc)
+      autoDeactivateKeyCodes.map((kc) => KEY_CODE_MAP[kc] || kc)
     );
 
     this.isActive = false;

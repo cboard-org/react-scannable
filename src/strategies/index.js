@@ -3,5 +3,5 @@ import ManualStrategy from './ManualStrategy';
 
 export default {
   automatic: AutomaticStrategy,
-  manual: ManualStrategy
+  manual: ManualStrategy,
 };

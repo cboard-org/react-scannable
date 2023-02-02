@@ -3,6 +3,6 @@ module.exports = {
     '**/components/**/index.js',
     '**/components/**/*.context.js',
     '**/components/**/*.spec.js',
-    '**/components/**/*.test.js'
-  ]
+    '**/components/**/*.test.js',
+  ],
 };

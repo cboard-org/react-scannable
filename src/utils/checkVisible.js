@@ -18,7 +18,7 @@ const checkVisible = (element, threshold = 0, mode = 'visible') => {
     above,
     below,
     rect,
-    viewHeight
+    viewHeight,
   };
 };
 

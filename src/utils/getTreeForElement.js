@@ -4,7 +4,7 @@ const getScannableChildrenOfElement = (element, scannables) => {
   let scannableChildren = [];
 
   if (elementChildren.length) {
-    elementChildren.forEach(child => {
+    elementChildren.forEach((child) => {
       const index = scannableNodes.indexOf(child);
       if (index >= 0) {
         const scannableChild = scannables[index];
@@ -23,8 +23,8 @@ const getScannableChildrenOfElement = (element, scannables) => {
 const getTreeForElement = (elementNode, scannables) => {
   const scannableChildren = getScannableChildrenOfElement(elementNode, scannables);
 
-  const newScannables = scannables.filter(e => scannableChildren.indexOf(e) < 0);
-  scannableChildren.forEach(sc => {
+  const newScannables = scannables.filter((e) => scannableChildren.indexOf(e) < 0);
+  scannableChildren.forEach((sc) => {
     if (sc.node.children && sc.node.children.length) {
       sc.children = getTreeForElement(sc.node, newScannables);
     }
