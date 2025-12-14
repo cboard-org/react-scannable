@@ -18,6 +18,8 @@ import {
   SCANNER_AUTODEACTIVATE_KEYCODES,
   SCANNER_AUTODEACTIVATE_COUNT,
   SCANNER_MOVE_BACK_KEYS,
+  SCANNER_MOVE_UP_KEYS,
+  SCANNER_MOVE_DOWN_KEYS,
 } from '../../constants';
 import utils from '../../utils';
 import '../../utils/polyfill';
@@ -274,6 +276,8 @@ Scanner.defaultProps = {
   advanceKeyCodes: SCANNER_ADVANCE_KEYCODES,
   advanceClickEvent: SCANNER_ADVANCE_CLICKEVENT,
   moveBackKeyCodes: SCANNER_MOVE_BACK_KEYS,
+  moveUpKeyCodes: SCANNER_MOVE_UP_KEYS,
+  moveDownKeyCodes: SCANNER_MOVE_DOWN_KEYS,
   className: SCANNER_CLASSNAME,
   classNameActive: SCANNER_CLASSNAME_ACTIVE,
   events: SCANNER_EVENTS,
@@ -300,6 +304,8 @@ Scanner.propTypes = {
   advanceKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
   advanceClickEvent: PropTypes.string,
   moveBackKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+  moveUpKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+  moveDownKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
   classNameActive: PropTypes.string,

@@ -15,6 +15,8 @@ const configKeys = [
   'selectKeyCodes',
   'strategy',
   'target',
+  'moveUpKeyCodes',
+  'moveDownKeyCodes',
 ];
 
 const getConfig = (props) => {
