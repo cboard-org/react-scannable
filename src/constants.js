@@ -13,6 +13,8 @@ export const SCANNER_CLASSNAME_ACTIVE = 'Scanner__Container Scanner__Container--
 export const SCANNER_ITERATION_INTERVAL = 2000;
 export const SCANNABLE_FOCUSED_CLASSNAME = 'scanner__focused';
 export const SCANNABLE_FOCUSED_VISIBLE_THRESHOLD = 5;
+export const SCANNER_MOVE_UP_KEYS = ['upArrow'];
+export const SCANNER_MOVE_DOWN_KEYS = ['downArrow'];
 
 export const KEY_CODE_MAP = {
   enter: 13,
