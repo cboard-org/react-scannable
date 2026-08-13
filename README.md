@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm install --save react-scannable
+npm install react-scannable
 ```
 
 ## Usage
