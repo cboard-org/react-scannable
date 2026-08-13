@@ -15,17 +15,17 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "build": "vite build",
-    "start": "npm run styleguide",
-    "styleguide": "vite --config vite.demo.config.mjs",
-    "styleguide:build": "vite build --config vite.demo.config.mjs",
+    "start": "npm run demo",
+    "demo": "vite --config vite.demo.config.mjs",
+    "demo:build": "vite build --config vite.demo.config.mjs",
     "prepare": "npm run build",
-    "predeploy": "npm run styleguide:build",
-    "deploy": "gh-pages -d styleguide",
+    "predeploy": "npm run demo:build",
+    "deploy": "gh-pages -d demo-dist",
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
     "check:package": "node scripts/check-package.mjs",
     "publint": "node scripts/check-publint.mjs",
-    "check": "npm run prettier:check && npm test && npm run build && npm run check:package && npm run publint && npm run styleguide:build"
+    "check": "npm run prettier:check && npm test && npm run build && npm run check:package && npm run publint && npm run demo:build"
   },
   "dependencies": {
     "uuid": "^11.1.1"

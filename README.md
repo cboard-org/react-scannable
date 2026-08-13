@@ -11,25 +11,19 @@ npm install --save react-scannable
 ## Usage
 
 ```jsx
-import React, { Component } from 'react';
+import React from 'react';
 import { Scannable, Scanner } from 'react-scannable';
 
-class Example extends Component {
-  state = {
-    isActive: true,
-  };
+function Example() {
+  const active = true;
 
-  render() {
-    const active = this.state.isActive;
-
-    return (
-      <Scanner active={active}>
-        <Scannable>
-          <button>CLICK</button>
-        </Scannable>
-      </Scanner>
-    );
-  }
+  return (
+    <Scanner active={active}>
+      <Scannable>
+        <button>CLICK</button>
+      </Scannable>
+    </Scanner>
+  );
 }
 ```
 
@@ -41,7 +35,7 @@ To develop and verify the package locally:
 npm install
 npm test
 npm run build
-npm run styleguide
+npm run demo
 ```
 
 Run the complete release-oriented verification with `npm run check`.

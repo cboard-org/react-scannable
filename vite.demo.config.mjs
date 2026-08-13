@@ -7,6 +7,6 @@ export default defineConfig({
   root: 'demo',
   build: {
     emptyOutDir: true,
-    outDir: '../styleguide',
+    outDir: '../demo-dist',
   },
 });
