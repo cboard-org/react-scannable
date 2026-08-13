@@ -9,7 +9,7 @@ if (!Object.values) {
     return reduce(
       keys(O),
       (v, k) => concat(v, typeof k === 'string' && isEnumerable(O, k) ? [O[k]] : []),
-      []
+      [],
     );
   };
 }
@@ -19,7 +19,7 @@ if (!Object.entries) {
     return reduce(
       keys(O),
       (e, k) => concat(e, typeof k === 'string' && isEnumerable(O, k) ? [[k, O[k]]] : []),
-      []
+      [],
     );
   };
 }

@@ -11,7 +11,7 @@ const getScannableChildrenOfElement = (element, scannables) => {
         scannableChildren.push(scannableChild);
       } else if (child.children && child.children.length) {
         scannableChildren = scannableChildren.concat(
-          getScannableChildrenOfElement(child, scannables)
+          getScannableChildrenOfElement(child, scannables),
         );
       }
     });

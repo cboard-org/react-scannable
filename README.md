@@ -38,3 +38,18 @@ class Example extends Component {
 ## License
 
 MIT © [shayc](https://github.com/shayc)
+
+## Development
+
+This project uses Vite 8 (powered by Rolldown) for the library and demo builds, and Vitest for
+tests. The published CommonJS and ESM filenames, automatic CSS injection, and legacy JavaScript
+syntax compatibility are retained for existing consumers.
+
+```bash
+npm install
+npm test
+npm run build
+npm run styleguide
+```
+
+Run the complete release-oriented verification with `npm run check`.
