@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { v4 as uuidv4 } from 'uuid';
 import ScannerContext from '../Scanner/Scanner.context';
 import checkVisibleAndScroll from '../../utils/checkVisibleAndScroll';
+import uuidv4 from '../../utils/uuidv4';
 
 class Scannable extends React.Component {
   constructor(props) {
