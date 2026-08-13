@@ -22,7 +22,7 @@ class ManualStrategy extends BaseStrategy {
     this.autoDeactivationCounter = 0;
     this.autoDeactivationToutFn = null;
     this.autoDeactivationKeyCodes = new Set(
-      autoDeactivateKeyCodes.map((kc) => KEY_CODE_MAP[kc] || kc)
+      autoDeactivateKeyCodes.map((kc) => KEY_CODE_MAP[kc] || kc),
     );
 
     this.isActive = false;

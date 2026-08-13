@@ -124,7 +124,7 @@ class Scanner extends React.Component {
 
     elementsToIterate = current.children || {};
     keysToIterate = Object.keys(elementsToIterate).filter((k) =>
-      elementsToIterate[k].element.isEnabled()
+      elementsToIterate[k].element.isEnabled(),
     );
 
     return {
@@ -169,7 +169,7 @@ class Scanner extends React.Component {
       () => {
         this.onScannableFocus(newFocusedId);
         this.strategy.activate();
-      }
+      },
     );
   }
 
@@ -295,7 +295,7 @@ Scanner.propTypes = {
   active: PropTypes.bool,
   autoDeactivateCount: PropTypes.number,
   autoDeactivateKeyCodes: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   ),
   advanceKeyCodes: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
   advanceClickEvent: PropTypes.string,
